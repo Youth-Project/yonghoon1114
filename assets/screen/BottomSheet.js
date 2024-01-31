@@ -11,9 +11,15 @@ import  {  vegetable, bread, fruit, sausage, seafood, truffle, noodle, spice, be
 
 const BottomSheet = () => {
 
+    // modal 열고 닫는 변수, 함수
     const [modalVisible, setModalVisible] = useState(false);
     const pressButton = () => {
         setModalVisible(true);
+    };
+    const closeModal = () => {
+        closeBottomSheet.start(()=>{
+            setModalVisible(false);
+        })
     };
       const screenHeight = Dimensions.get("screen").height;
       const panY = useRef(new Animated.Value(screenHeight)).current;
@@ -28,6 +34,7 @@ const BottomSheet = () => {
           useNativeDriver: true,
       });
   
+    //   바텀시트 애니메이션
       const closeBottomSheet = Animated.timing(panY, {
           toValue: screenHeight,
           duration: 300,
@@ -56,17 +63,15 @@ const BottomSheet = () => {
           }
       }, [modalVisible]);
   
-      const closeModal = () => {
-          closeBottomSheet.start(()=>{
-              setModalVisible(false);
-          })
-      }
+
       
     return (
         <>
+    {/* 냉장고 재료추가 열기 버튼인데 아래서 끌어올리는거 안돼서 일단 만들어 놓음 */}
         <TouchableOpacity style={styles.button} onPress={pressButton}>
             <Text style={styles.addButton}>+</Text>
         </TouchableOpacity>
+    {/* 냉장고 재료추가 바텀시트 */}
         <Modal
             visible={modalVisible}
             animationType={"fade"}
@@ -83,141 +88,141 @@ const BottomSheet = () => {
                     style={{ ...styles.bottomSheetContainer, transform: [{ translateY: translateY }] }}
                     {...panResponders.panHandlers}
                 >
-             <View style={styles.container}> 
-                <View style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Text style={styles.title}>
-                        냉장고 재료추가
-                    </Text>
-                    <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                        <Text>X</Text>
-                        {/* X대신 이미지 */}
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.inputArea}>
-                    <View style={styles.wrapper}>
-                        <View style={styles.searchImg}>
-                            {/* 돋보기 이미지 */}
+                    <View style={styles.container}> 
+                        <View style={{ display: 'flex', flexDirection: 'row' }}>
+                            <Text style={styles.title}>
+                                냉장고 재료추가
+                            </Text>
+                            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                                <Text>X</Text>
+                                {/* X대신 이미지 */}
+                            </TouchableOpacity>
                         </View>
-                        <TextInput style={styles.search} placeholder='검색...'></TextInput>
+                        <View style={styles.inputArea}>
+                            <View style={styles.wrapper}>
+                                <View style={styles.searchImg}>
+                                    {/* 돋보기 이미지 */}
+                                </View>
+                                <TextInput style={styles.search} placeholder='검색...'></TextInput>
+                            </View>
+                        </View>
+                        <View style={styles.foodContainer}>
+                            <ScrollView contentContainerStyle={styles.foodName} style={styles.scrollView}>
+                                <Text style={styles.foodCategory}>채소</Text>
+                                {vegetable && vegetable.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>빵/떡</Text>
+                                {bread && bread.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>햄/소시지</Text>
+                                {sausage && sausage.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>해산물</Text>
+                                {seafood && seafood.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>유제품</Text>
+                                {milk && milk.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>고기류</Text>
+                                {meat && meat.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>과일</Text>
+                                {fruit && fruit.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>곡물</Text>
+                                {grain && grain.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>콩/견과류</Text>
+                                {bean && bean.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>조미료/양념</Text>
+                                {spice && spice.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>면</Text>
+                                {noodle && noodle.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={styles.foodCategory}>트러플</Text>
+                                {truffle && truffle.map((food, index) => (
+                                    <TouchableOpacity key={index} style={styles.itemContainer}>
+                                        <View style={styles.circularView}>
+                                            {/* 어레이에 있는 이미지 넣기 */}
+                                        </View>
+                                        <Text>{food.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <View style={{ marginBottom: 10 }}></View>
+                            </ScrollView>
+                        </View>
                     </View>
-                </View>
-                <View style={styles.foodContainer}>
-                    <ScrollView contentContainerStyle={styles.foodName} style={styles.scrollView}>
-                        <Text style={styles.foodCategory}>채소</Text>
-                        {vegetable && vegetable.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>빵/떡</Text>
-                        {bread && bread.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>햄/소시지</Text>
-                        {sausage && sausage.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>해산물</Text>
-                        {seafood && seafood.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>유제품</Text>
-                        {milk && milk.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>고기류</Text>
-                        {meat && meat.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>과일</Text>
-                        {fruit && fruit.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>곡물</Text>
-                        {grain && grain.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>콩/견과류</Text>
-                        {bean && bean.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>조미료/양념</Text>
-                        {spice && spice.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>면</Text>
-                        {noodle && noodle.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <Text style={styles.foodCategory}>트러플</Text>
-                        {truffle && truffle.map((food, index) => (
-                            <TouchableOpacity key={index} style={styles.itemContainer}>
-                                <View style={styles.circularView}>
-                                    {/* 어레이에 있는 이미지 넣기 */}
-                                </View>
-                                <Text>{food.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                        <View style={{ marginBottom: 10 }}></View>
-                    </ScrollView>
-                </View>
+                </Animated.View>
             </View>
-                    </Animated.View>
-                </View>
-            </Modal></>
+        </Modal></>
     )
 }
 
@@ -331,24 +336,23 @@ const styles = StyleSheet.create({
         // backgroundColor:'gray'
     },
     circularView: {
-        width: 50,   // Adjust the width of the circular view
-        height: 50,  // Adjust the height of the circular view
-        borderRadius: 25, // Make it a circle by setting borderRadius to half of width/height
-        backgroundColor: 'white', // Set the background color of the circular view
-        // marginRight: 10, // Adjust as needed to add space between the circular view and text
+        width: 50,   
+        height: 50, 
+        borderRadius: 25, 
+        backgroundColor: 'white', 
+        // marginRight: 10, 
         marginBottom: 5,
         backgroundColor: '#FEA655'
       },
     foodName:{
-        flexDirection: 'row', // Set to 'row' for horizontal layout
-        flexWrap: 'wrap',    // Allow items to wrap to the next line
-        justifyContent: 'space-between', // Optional: Adjust as needed
+        flexDirection: 'row',
+        flexWrap: 'wrap',   
         paddingHorizontal: 20,
         // backgroundColor: 'purple',
         gap: 5
     },
     scrollView: {
-        height: 580, // Set a height for the ScrollView to enable scrolling
+        height: 580, 
     },
     overlay: {
         flex: 1,
