@@ -2,11 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
 const NavBar = () => {
-  const [clickCount, setClickCount] = useState(0);
-
-  const handleMenuClick = (count) => {
-    setClickCount(count);
-  };
   
   return (
     <View style={styles.navBar}>

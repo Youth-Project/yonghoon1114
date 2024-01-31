@@ -1,7 +1,9 @@
 import { View, StyleSheet } from "react-native";
-import Ref from "./.expo/screen/ref";
-import TapBar from "./.expo/screen/tapBar";
-import NavBar from "./.expo/screen/navBar";
+import Ref from "./assets/screen/ref";
+import TapBar from "./assets/screen/tapBar";
+import NavBar from "./assets/screen/navBar";
+import BottomSheet from "./assets/screen/BottomSheet";
+import SecondBottomSheet from "./assets/screen/BottomSheet";
 
 const App = () =>{
   return(
@@ -9,6 +11,7 @@ const App = () =>{
       <TapBar></TapBar>
       <Ref></Ref>
       <NavBar></NavBar>
+      {/* <BottomSheet></BottomSheet> */}
     </View>
   )
 }
