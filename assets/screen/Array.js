@@ -29,6 +29,7 @@ const vegetable = [
     { name: '호박', amount: 0, unit: '', img:''},
     { name: '숙주', amount: 0, unit: '' , img:''},
 ]
+
 const bread =[
     // 빵/떡
     { name: '가래떡', amount: 0, unit: '' , img:''},
@@ -50,6 +51,7 @@ const sausage=[
     { name: '스팸', amount: 0, unit: '' , img:''},
     { name: '햄', amount: 0, unit: '' , img:''},
 ]
+
 const seafood=[
     // 해산물
     { name: '갈치', amount: 0, unit: '' , img:''},
@@ -95,6 +97,7 @@ const milk =[
     { name: '체다치즈', amount: 0, unit: '' , img:''},
 
 ]
+
 const meat=[
     // 고기류
     { name: '닭고기', amount: 0, unit: '', img:''},
@@ -103,6 +106,7 @@ const meat=[
     { name: '양고기', amount: 0, unit: '' , img:''},
     { name: '오리고기', amount: 0, unit: '' , img:''},
 ]
+
 const fruit=[
     // 과일
     { name: '감', amount: 0, unit: '' , img:''},
@@ -127,6 +131,7 @@ const fruit=[
     { name: '파인애플', amount: 0, unit: '' , img:''},
     { name: '포도', amount: 0, unit: '' , img:''},
 ]
+
 const grain=[
     // 곡물
     { name: '감자', amount: 0, unit: '', img:''},
@@ -140,6 +145,7 @@ const grain=[
     { name: '찹쌀가루', amount: 0, unit: '' , img:''},
     { name: '통밀', amount: 0, unit: '' , img:''},
 ]
+
 const bean=[
     // 콩/견과류
     { name: '검은콩', amount: 0, unit: '', img:''},
@@ -152,6 +158,7 @@ const bean=[
     { name: '콩', amount: 0, unit: '' , img:''},
     { name: '호두', amount: 0, unit: '' , img:''},
 ]
+
 const spice=[
     // 조미료/양념
     { name: '간장', amount: 0, unit: '' , img:''},
@@ -193,6 +200,7 @@ const spice=[
     { name: '핫소스', amount: 0, unit: '', img:''},
     { name: '후추', amount: 0, unit: '', img:''},
 ]
+
 const noodle=[
     // 면
     { name: '당면', amount: 0, unit: '' , img:''},
@@ -203,16 +211,28 @@ const noodle=[
     { name: '우동면', amount: 0, unit: '' , img:''},
     { name: '칼국수면', amount: 0, unit: '' , img:''},
 ]
+
 const truffle=[
     // 트러플
     { name: '트러플', amount: 0, unit: '' , img:''},
     { name: '트러플 소금', amount: 0, unit: '', img:''},
     { name: '트로플 오일', amount: 0, unit: '', img:''},
 ];
+
 const selected=[
     // 빈어레이
     { name: '배추', amount: 3, unit: 'g' , img:''},
     { name: '가지', amount: 4, unit: '개' , img:''},
+    { name: '당면', amount: 0, unit: '' , img:''},
+    { name: '라면', amount: 0, unit: '' , img:''},
+    { name: '소면', amount: 0, unit: '' , img:''},
+    { name: '수제비', amount: 0, unit: '', img:''},
+    { name: '스파게티 면', amount: 0, unit: '', img:''},
+    { name: '소면', amount: 0, unit: '' , img:''},
+    { name: '수제비', amount: 0, unit: '', img:''},
+    { name: '스파게티 면', amount: 0, unit: '', img:''},
+    { name: '우동면', amount: 0, unit: '' , img:''},
+    { name: '칼국수면', amount: 0, unit: '' , img:''},
 ];
 
     export { vegetable, bread, fruit, sausage, seafood, truffle, noodle, spice, bean, grain, meat, milk, selected};

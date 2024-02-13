@@ -9,11 +9,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal,
 } from 'react-native';
 import  {  vegetable, bread, fruit, sausage, seafood, truffle, noodle, spice, bean, grain, meat, milk }  from './Array'
 
-const BottomSheet = ({ data }) => {
+const BottomSheet = () => {
 
-    const [searchQuery, setSearchQuery] = useState('');
-    // Filtered data based on search query
-    const filteredData = data.filter(food => food.name.toLowerCase().includes(searchQuery.toLowerCase()));
     // modal 열고 닫는 변수, 함수
     const [modalVisible, setModalVisible] = useState(false);
     const pressButton = () => {
@@ -67,6 +64,7 @@ const BottomSheet = ({ data }) => {
       }, [modalVisible]);
   
 
+      
     return (
         <>
     {/* 냉장고 재료추가 열기 버튼인데 아래서 끌어올리는거 안돼서 일단 만들어 놓음 */}
