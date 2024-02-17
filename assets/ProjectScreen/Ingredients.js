@@ -21,7 +21,12 @@ const Ingredients = () => {
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : allIngredients;
-
+    const [isTextInput, setIsTextInput] = useState('');
+  const checkInput = (text) =>{
+    if(text.trim()===''){
+      setIsTextInput(false)
+    }
+  }
   //--모달--\\
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -126,7 +131,7 @@ const Ingredients = () => {
           <TextInput
           style={styles.search}
           placeholder='검색...'
-          onChangeText={setSearchQuery}
+          onChangeText={(text)=>{setSearchQuery(text); checkInput(text)}}
           value={searchQuery}
           keyboardType="default"
           />
@@ -134,17 +139,18 @@ const Ingredients = () => {
       </View>
 
       <SafeAreaView>
+        
       <View style={styles.foodContainer}>
          <FlatList
             data={filteredData}
             keyExtractor={(item) => item.name}
             renderItem={({ item }) => (
-          <TouchableOpacity key={item} style={styles.itemContainer} onPress={()=>{pressButton(); setItemClicked(item.name);setFoodCategory(item.category)}}>
-            <View style={styles.circularView}>
-              <Image source={item.img} />
-            </View>
-            <Text>{item.name}</Text>
-          </TouchableOpacity>
+              <TouchableOpacity key={item} style={styles.itemContainer} onPress={() => { pressButton(); setItemClicked(item.name); setFoodCategory(item.category); } }>
+                <View style={styles.circularView}>
+                  <Image source={item.img} />
+                </View>
+                <Text>{item.name}</Text>
+              </TouchableOpacity>
         )}
         numColumns={5}
       />
@@ -297,10 +303,10 @@ const styles = StyleSheet.create({
       alignItems:'center'
   },
   foodCategory:{
-      width: 300,
+      // width: 300,
       fontWeight: '400',
       fontSize: 20,
-      marginTop: 28
+      // marginTop: 28
   },
   itemContainer: {
       // borderBottomWidth: 1,
@@ -593,7 +599,6 @@ const styles = StyleSheet.create({
 export default Ingredients;
 
 /*
-
         <ScrollView contentContainerStyle={styles.foodName} style={styles.scrollView}>
           <Text style={styles.foodCategory}>채소</Text>
             {vegetable && vegetable.map((food, index) => (

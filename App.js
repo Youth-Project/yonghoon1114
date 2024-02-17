@@ -4,13 +4,15 @@ import TapBar from "./assets/screen/tapBar";
 import NavBar from "./assets/screen/navBar";
 import BottomSheet from "./assets/screen/BottomSheet";
 import SecondBottomSheet from "./assets/screen/BottomSheet";
+import Ingredients from "./assets/screen/addNew";
 
 const App = () =>{
   return(
     <View style={styles.basic}>
-      <TapBar></TapBar>
-      <Ref></Ref>
-      <NavBar></NavBar>
+      {/* <TapBar></TapBar> */}
+      {/* <Ref></Ref> */}
+      <Ingredients></Ingredients>
+      {/* <NavBar></NavBar> */}
       {/* <BottomSheet></BottomSheet> */}
     </View>
   )

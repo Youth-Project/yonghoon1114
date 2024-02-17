@@ -68,7 +68,7 @@ const ingredientSearchFilter = (searchInput) => { //searchInput=입력값
 const switchUnitConversion = async (weight, ingredient, conversionType, category) => {
   const ingredientData = await fetchIngredient(category);
   const ratio = ingredientData[ingredient].ingredient_ratio[conversionType];//이거 맞는지 확인
-   console.log(ratio + ' ratio_switchUnitConversion');
+  //  console.log(ratio + ' ratio_switchUnitConversion');
    let weightConversion = 0; //바뀐 숫자 담는곳
    let unit = ' '; //바뀐 유닛 담는곳
    //switch/case구문으로 각 케이스에 걸리면 그거에 맞는값을 리턴 예) conversionType=gram_to_unit; --> return (weight * conversionType2[conversionType]).toFixed(0); 으로 단위를 바꿔주는 함수
@@ -91,8 +91,8 @@ const switchUnitConversion = async (weight, ingredient, conversionType, category
      case 'gram_to_spoon':
        weightConversion = (weight * ratio).toFixed(2);
        unit = '스푼';
-       console.log(weightConversion + ' weightConversion_switchUnitConversion');
-       console.log(unit + ' unit_switchUnitConversion');
+      //  console.log(weightConversion + ' weightConversion_switchUnitConversion');
+      //  console.log(unit + ' unit_switchUnitConversion');
        return [weightConversion, unit];
      case 'spoon_to_gram':
        weightConversion = (weight / ratio).toFixed(2);
@@ -263,22 +263,22 @@ const checkIfUserRefrigeratorExists = async () => {
 const updateUsersRefrigeratorAddedFromIngredient = async (weight, ingredient_name, conversionType, currentUnit, category) => {
   //1. input값 받고 unit을 switchUnitConversion을 돌려 내보내야됨
   //2. inputIngredient 값을 받고 유저냉장고에 넣는 역할 (나중에 inputIngredient랑 합쳐도 괜찮을듯 (합침 기억해두기))
-    console.log(weight, ingredient_name, conversionType, currentUnit, category)
+    // console.log(weight, ingredient_name, conversionType, currentUnit, category)
+    const storePreviousUserRefrigerator = await fetchUserRefrigerator();
+    console.log(storePreviousUserRefrigerator);
     const switchedUnit = await switchUnitConversion (weight, ingredient_name, conversionType, category);
     const switchedUnitData = switchedUnit.data;
-    const storePreviousUserRefrigerator = fetchUserRefrigerator();
     // console.log(switchedUnitData);
     const switchedUnitWeight = switchedUnit[0];
     const switchedUnitCurrentUnit = switchedUnit[1];
     // console.log(switchedUnitWeight);
     // console.log(switchedUnit[1]);
-    const updatedRefrigeratorMap = await addToUsersRefrigerator(ingredient_name, switchedUnitWeight, switchedUnitCurrentUnit, category);
-    const updatedRefrigeratorMap1 = [storePreviousUserRefrigerator, ...updatedRefrigeratorMap]
-    console.log(updatedRefrigeratorMap);
-    // firestore().collection('users').doc('user_id').user_refrigerator.update(updatedRefrigeratorMapRef);
-    firestore().collection('users').doc('user_id').update({
-      user_refrigerator: {ingredient_name: updatedRefrigeratorMap1}
-    }); 
+    const updatedRefrigeratorMapRef = await addToUsersRefrigerator(ingredient_name, switchedUnitWeight, switchedUnitCurrentUnit, category);
+    // console.log(updatedRefrigeratorMap);
+    const updatedRefrigeratorMap = {...storePreviousUserRefrigerator, [ingredient_name]: updatedRefrigeratorMapRef};
+      firestore().collection('users').doc('user_id').update({
+      user_refrigerator: updatedRefrigeratorMap
+    });
     // firestore().collection('users').doc('user_id').update(updatedRefrigeratorMapRef); 
   };
 //db에서 가져오기
@@ -291,56 +291,334 @@ const updateUsersRefrigeratorAddedFromIngredient = async (weight, ingredient_nam
 };*/
 
 //보내주는거*
-const showOnRefrigerator = async (inputName) => {
+const showOnRefrigerator = async () => {
   try {
-    const refrigerator = await fetchUserRefrigerator();
-    const unit = refrigerator[inputName].user_ingredient_current_unit;
-    const weight = refrigerator[inputName].user_ingredient_gram;
-    const name = refrigerator[inputName].user_ingredient_name;
-    const image = refrigerator[inputName].user_ingredient_image;
+    const userRefrigerator = await fetchUserRefrigerator();
+    
+    console.log("User refrigerator data:", userRefrigerator);
 
-    let conversionType = '';
-
-    switch (unit) {
-      case 'g':
-        conversionType = 'gram_to_gram';
-        break;
-      case '개':
-        conversionType = 'gram_to_unit';
-        break;
-      case '스푼':
-        conversionType = 'gram_to_spoon';
-        break;
-      case 'ml':
-        conversionType = 'gram_to_ml';
-        break;
-      default:
-        // Set a default conversion type if necessary
-        conversionType = 'default_conversion_type';
-        break;
+    // Check if userRefrigerator exists and has ingredients
+    if (!userRefrigerator || Object.keys(userRefrigerator).length === 0) {
+      console.log("User refrigerator does not exist or has no ingredients.");
+      return false;
     }
-    const convertedUnit = await switchUnitConversion(weight, name, conversionType);
-    console.log([name, image, ...convertedUnit] )
-    return [name, image, ...convertedUnit]  } 
-    catch (error) {
+
+    // Assuming you want to process each ingredient in the refrigerator
+    const updatedIngredients = [];
+
+    // Iterate over each ingredient in the refrigerator
+    for (const [ingredientId, ingredientData] of Object.entries(userRefrigerator)) {
+      const unit = ingredientData.user_ingredient_current_unit;
+      const weight = ingredientData.user_ingredient_gram;
+      const name = ingredientData.user_ingredient_name;
+      const category = ingredientData.user_ingredient_category;
+
+      console.log("Unit:", unit);
+      console.log("Weight:", weight);
+      console.log("Name:", name);
+      console.log("Category:", category);
+
+      let conversionType;
+
+      // Determine conversion type based on unit
+      switch (unit) {
+        case 'g':
+          conversionType = 'gram_to_gram'; // Assuming conversion to spoon for 'g'
+          break;
+        case '개':
+          conversionType = 'gram_to_unit'; // Assuming conversion to unit for '개'
+          break;
+        case '스푼':
+          conversionType = 'gram_to_spoon';
+          break;
+        case 'ml':
+          conversionType = 'gram_to_ml'; // Assuming conversion to spoon for 'ml'
+          break;
+        default:
+          conversionType = '  ';
+          break;
+      }
+
+      console.log("Conversion type:", conversionType);
+
+      let convertedWeight;
+      if (conversionType) {
+        convertedWeight = await switchUnitConversion(weight, name, conversionType, category);
+        console.log("Converted weight:", convertedWeight);
+      } else {
+        // If no conversion needed, set convertedWeight to original weight and unit
+        convertedWeight = [weight.toString(), unit];
+      }
+
+      // Add the updated ingredient to the list
+      updatedIngredients.push({
+        unit: unit,
+        weight: convertedWeight[0],
+        unitAfterConversion: convertedWeight[1],
+        name: name,
+        category: category,
+        id: ingredientId,
+        image: ingredientData.user_ingredient_image
+      });
+    }
+
+    console.log("Updated user refrigerator ingredients:", updatedIngredients);
+
+    return updatedIngredients;
+  } catch (error) {
     console.error("Error in fetching refrigerator data:", error);
-    return false; // Or handle the error accordingly
+    return false;
   }
 };
-
 // 가져온걸로 프런트에서 보여주면 1일차 끗
 
+const updateUsersRecipe = async (recipe_difficulty, recipe_id, recipe_image, recipe_name, recipe_ingredients, recipe_steps, recipe_time) => {
+  const previousUserRecipe = await fetchUsersRecipe();
+  const userRecipe = {
+    user_recipe_difficulty: recipe_difficulty,
+    user_recipe_id: recipe_id,
+    user_recipe_image: recipe_image,
+    user_recipe_name: recipe_name,
+    user_recipe_ingredients: recipe_ingredients,
+    user_recipe_steps: recipe_steps,
+    user_recipe_time: recipe_time
+  };
+  const updatedUsersRefrigeratorMap = {...previousUserRecipe, [recipe_id]: userRecipe};
+      firestore().collection('users').doc('user_id').update({
+      user_refrigerator: updatedUsersRefrigeratorMap
+  });
+};
 
 //day 2
 //조리완료 후 차감
 
 //완료된 레시피 재료불러오기 -> 차감 -> 업뎃
-const getAndUpdateFinishedRecipesIngredient = async(recipe_id) => {
-  const recipeIngredient = await collection(recipes).doc(recipe_id).get(recipe_ingredients);
-  for (i = 0; i = recipeIngredient; i++){
-    //여기서 인그리언트 이름 빼내고 단위도 통일해야되는데
+const fetchRecipeAll = async () => {
+  try {
+    const recipeDB = firestore().collection('recipes').getDocs;
+    const recipreInfo = await recipeDB.get();
+    const recipreInfoData = recipreInfo.data();
+    console.log(recipreInfoData)
+    return recipreInfoData;
+  } catch (error){
+    console.error("ERROR IN Calling Recipe DB:", error);
   }
-  //subtractIngredient(recipeIngredient.get([i]); //일케 빼는 펑션에 넣어서 차감 해버려야지
+};
+const findLostCategory = (CategorylessIngredient) =>  {
+  return (
+    bean_nuts(CategorylessIngredient) ||
+    bread_ricecake(CategorylessIngredient) ||
+    dairy(CategorylessIngredient) ||
+    fruit(CategorylessIngredient) ||
+    grain(CategorylessIngredient) ||
+    ham_sausage(CategorylessIngredient) ||
+    meat(CategorylessIngredient) ||
+    noodle(CategorylessIngredient) ||
+    seafood(CategorylessIngredient) ||
+    seasoning(CategorylessIngredient) ||
+    truffle(CategorylessIngredient) ||
+    vegetable(CategorylessIngredient) ||
+    "unknown" // Return unknown if no category matches
+  );
+};
+
+const bean_nuts = (unknownCategory) => {
+  const bean_nuts = ["검은콩","깨","두부","땅콩","순두부","아몬드","완두콩","콩","호두"];
+  for (let i = 0; i < bean_nuts.length; i++) {
+    if (bean_nuts[i] === unknownCategory) {
+      return "bean_nuts";
+    }
+  }
+};
+
+const bread_ricecake = (unknownCategory) => {
+  const bread_ricecake = ["가래떡","떡국떡","떡볶이떡","모닝빵","바게트","베이글","식빵"];
+  for (let i = 0; i < bread_ricecake.length; i++) {
+    if (bread_ricecake[i] === unknownCategory) {
+      return "bread_ricecake";
+    }
+  }
+};
+
+const dairy = (unknownCategory) => {
+  const dairy = ["계란","메추리알","모짜렐라치즈","옥수수콘","요거트","체다치즈"];
+  for (let i = 0; i < dairy.length; i++) {
+    if (dairy[i] === unknownCategory) {
+      return "dairy";
+    }
+  }
+};
+
+const fruit = (unknownCategory) => {
+  const fruit = ["감","건포도","귤","딸기","라임","레몬","망고","메론","바나나","배","복숭아","블루베리","사과","아보카도","오렌지","자두","체리","키위","파인애플","포도"];
+  for (let i = 0; i < fruit.length; i++) {
+    if (fruit[i] === unknownCategory) {
+      return "fruit";
+    }
+  }
+};
+
+const grain = (unknownCategory) => {
+  const grain = ["감자","고구마","귀리","누릉지","밀가루","부침가루","빵가루","옥수수","찹쌀가루","통밀"];
+  for (let i = 0; i < grain.length; i++) {
+    if (grain[i] === unknownCategory) {
+      return "grain";
+    }
+  }
+};
+
+const ham_sausage = (unknownCategory) => {
+  const ham_sausage = ["미트볼","베이컨","비엔나소시지","순대","스팸","햄"];
+  for (let i = 0; i < ham_sausage.length; i++) {
+    if (ham_sausage[i] === unknownCategory) {
+      return "ham_sausage";
+    }
+  }
+};
+
+const meat = (unknownCategory) => {
+  const meat = ["닭고기","돼지고기","소고기","양고기","오리고기"];
+  for (let i = 0; i < meat.length; i++) {
+    if (meat[i] === unknownCategory) {
+      return "meat";
+    }
+  }
+};
+
+const noodle = (unknownCategory) => {
+  const noodle = ["당면","라면","소면","수제비","스파게티면","우동면","칼국수면"];
+  for (let i = 0; i < noodle.length; i++) {
+    if (noodle[i] === unknownCategory) {
+      return "noodle";
+    }
+  }
+};
+
+const seafood = (unknownCategory) => {
+  const seafood = ["갈치","개맛살","건새우","고등어","골뱅이","굴","꼬막","꽁치","꽃게","낙지","다시마","대합","도다리","동태","멸치","명태","문어","미역","바지락","새우","소라","아귀","연어","오징어","전복","전어","조개","조기","쭈꾸미","홍합"];
+  for (let i = 0; i < seafood.length; i++) {
+    if (seafood[i] === unknownCategory) {
+      return "seafood";
+    }
+  }
+};
+
+const seasoning = (unknownCategory) => {
+  const seasoning = ["간장","고추장","고춧가루","굴소스","굵은소금","까나리액젓","깨소금","꿀","다진마늘","데리야끼소스","돈까스소스","된장","마요네즈","머스타드소스","멸치액젓","물엿","미원","버터","설탕","소금","쇠고기다시다","식초","쌈장","오징어젓갈","올리고당","올리브유","짜장가루","참기름","청국장","초고추장","춘장","칠리소스","카레가루","케첩","토마토소스","핫소스","후추"];
+  for (let i = 0; i < seasoning.length; i++) {
+    if (seasoning[i] === unknownCategory) {
+      return "seasoning";
+    }
+  }
+};
+
+const truffle = (unknownCategory) => {
+  const truffle = ["트러플","트러플소금","트러플오일"];
+  for (let i = 0; i < truffle.length; i++) {
+    if (truffle[i] === unknownCategory) {
+      return "truffle";
+    }
+  }
+};
+
+const vegetable = (unknownCategory) => {
+  const vegetable = ["가지","고추","김치","깻잎","당근","대파","마늘","무","배추","브로콜리","비트","상추","샐러리","숙주","시금치","아스파라거스","애호박","양배추","양송이버섯","양파","열무","오이","콩나물","토마토","파프리카","팽이버섯","표고버섯","호박"];
+  for (let i = 0; i < vegetable.length; i++) {
+    if (vegetable[i] === unknownCategory) {
+      return "vegetable";
+    }
+  }
+};
+const fetchRecipe = async (input_id) => {
+  try {
+    const recipeDB = firestore().collection('recipes').doc(input_id);
+    const recipreInfo = await recipeDB.get();
+    const recipreInfoData = recipreInfo.data();
+    // console.log(recipreInfoData)
+    return recipreInfoData;
+  } catch (error){
+    console.error("ERROR IN Calling Recipe DB:", error);
+  }
+};
+
+const getAndUpdateFinishedRecipesIngredient = async (recipe_id) => {
+  try {
+    console.log('Fetching user refrigerator...');
+    let userRefrigerator = await fetchUserRefrigerator(); // Ensure this can be updated
+    console.log('User refrigerator fetched:', userRefrigerator);
+
+    console.log('Fetching recipe data...');
+    const recipeData = await fetchRecipe(recipe_id);
+    console.log('Recipe data fetched:', recipeData);
+
+    const recipeIngredients = recipeData.recipe_ingredients;
+
+    const numbersMap = {};
+    const unitMap = {};
+
+    Object.keys(recipeIngredients).forEach(key => {
+      const value = recipeIngredients[key];
+      const numbers = value.match(/\d+/g) || [];
+      const letters = value.match(/[^\d\s]+/g) || []; // Exclude spaces from matches
+
+      numbersMap[key] = numbers.join(''); // Assuming single number per ingredient
+      unitMap[key] = letters.join(''); // Assuming single unit per ingredient
+    });
+
+    for (const ingredient in recipeIngredients) {
+      if (recipeIngredients.hasOwnProperty(ingredient)) {
+        let conversionType = '';
+        let weight = parseFloat(numbersMap[ingredient]); // Changed to let
+        const unit = unitMap[ingredient];
+        const category = userRefrigerator[ingredient]?.user_ingredient_category;
+        
+        if (category) {
+          switch (unit) {
+            case '스푼':
+              conversionType = 'gram_to_spoon';
+              break;
+            case '개':
+              conversionType = 'gram_to_unit';
+              break;
+            case '약간':
+              conversionType = 'gram_to_spoon';
+              weight = 1 / 6; // Adjust weight for '약간'
+              break;
+            default:
+              conversionType = 'gram_to_gram';
+              break;
+          }
+          
+          const switchUnit = await switchUnitConversion(weight, ingredient, conversionType, category);
+
+          if (userRefrigerator[ingredient]?.user_ingredient_gram) {
+            userRefrigerator[ingredient].user_ingredient_gram -= parseFloat(switchUnit[0]);
+          } else {
+            console.error(`Error: ${ingredient} not found in userRefrigerator`);
+          }
+        } else {
+          console.error(`Error: ${ingredient} not found in userRefrigerator`);
+        }
+      }
+    }
+
+    await firestore()
+      .collection('users')
+      .doc('user_id') // Assuming user_id is a variable containing the user's ID
+      .update({
+        user_refrigerator: userRefrigerator
+      })
+      .then(() => {
+        console.log('Document successfully updated!');
+      })
+      .catch((error) => {
+        console.error('Error updating document:', error);
+      });
+    
+  } catch (error) {
+    console.error('Error in getAndUpdateFinishedRecipesIngredient:', error);
+    // Handle error as per your application's requirements
+  }
 };
 /*
 //차감및 업뎃
@@ -432,5 +710,6 @@ export {
   matchIngredientandReceipt,
   subtractIngredient1,
   fetchUserRefrigerator,
-  fetchIngredient
+  fetchIngredient,
+  fetchRecipeAll
 };

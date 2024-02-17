@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Image,
   Animated, TouchableWithoutFeedback, Dimensions, PanResponder, TextInput,} from 'react-native';
@@ -6,13 +7,26 @@ import BottomSheet from '../components/BottomSheet';
 import EditIngredientsIcon from "../assets/icons/EditIngredientsIcon";
 import RefTruffleLogo from "../assets/logo/RefTruffleLogo";
 import DbFunc from "../BackFunc/DbFunc";
-import { updateUsersRefrigeratorAddedFromIngredient,showOnRefrigerator, fetchUserRefrigerator,fetchIngredient } from '../BackFunc/RecipeFunc'; 
+import { updateUsersRefrigeratorAddedFromIngredient, showOnRefrigerator, fetchUserRefrigerator, fetchIngredient, getAndUpdateFinishedRecipesIngredient, fetchRecipeAll } from '../BackFunc/RecipeFunc'; 
 import firestore from "@react-native-firebase/firestore";
 
 const RefTab = () => {
   const [isItem, setIsItem] = useState(true);
   const checkItem = () =>{
   }
+  // const data = db.collection.showOnRefrigerator.get();
+  const [showUserRef, setShowUserRef] = useState();
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = showOnRefrigerator();
+      setShowUserRef(Object.values(data));
+    };
+    
+    fetchData();
+  }, []); 
+
+  console.log("ddddd" + showUserRef)
   // const [vegetableArray, changeVegetable] = useState(vegetable);
   // const [breadArray, changeBread] = useState(bread);
   // const [fruitArray, changeFruit] = useState(fruit);
@@ -137,26 +151,28 @@ const RefTab = () => {
           <View style={styles.foodCont}>
             <ScrollView style={{ gap: 11, width:'85%' }}>
               {/* <View style={styles.foods}> */}
-              {selectedFood && selectedFood.map((food, index) => (
-                            <View key={index} style={styles.foods}>
-                                <View style={styles.circle}>
-                                  <Image source={food.img} />
-                                </View>
-                                <Text style={styles.foodName}>
-                                  {/* 음식이름  */} {food.name}
-                                </Text>
-                                <Text style={styles.foodCount}>
-                                  {/* 개수,수량 등 */} {food.amount}
-                                </Text>
-                                <Text style={styles.foodUnit}>
-                                  {/* 단위 */} 
-                                  {food.unit}
-                                </Text>
-                            <TouchableOpacity onPress={()=>{pressButton(); showOnRefrigerator('트러플소금','truffle'); setFoodCategory(food.category); setItemClicked(food.name)}} style={styles.pencil}>
-                              <EditIngredientsIcon/>
-                            </TouchableOpacity>
-                            </View>
-                        ))}
+              <View>
+                  {showUserRef && showUserRef.map((food, index) => (
+                    <View key={index} style={styles.foods}>
+                      <View style={styles.circle}>
+                        <Image source={food.image} />
+                      </View>
+                      <Text style={styles.foodName}>{food.name}</Text>
+                      <Text style={styles.foodCount}>{food.weight}</Text>
+                      <Text style={styles.foodUnit}>{food.unit}</Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          pressButton();
+                          setFoodCategory(food.category);
+                          setItemClicked(food.name);
+                        }}
+                        style={styles.pencil}
+                      >
+                        {/* EditIngredientsIcon component */}
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
               {/* </View> */}
             </ScrollView>
           </View>
@@ -188,7 +204,7 @@ const RefTab = () => {
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.textGray}>
-                    수량
+                    수량 
                 </Text>
                 <View style={styles.grayBorderContainer}>
                     <View style= {{display: 'flex', flexDirection:'row'}}>
@@ -349,7 +365,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 100,
-    backgroundColor: 'yellow',
+    // backgroundColor: 'yellow',
     marginRight: 16 
   },
   foodName:{
@@ -369,7 +385,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     width: 38,
     // textAlign: 'right',
-    backgroundColor: 'yellow'
+    // backgroundColor: 'yellow'
   },
   pencil:{
     width: 30,
