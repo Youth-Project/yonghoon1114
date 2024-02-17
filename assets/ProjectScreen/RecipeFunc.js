@@ -265,7 +265,7 @@ const updateUsersRefrigeratorAddedFromIngredient = async (weight, ingredient_nam
   //2. inputIngredient 값을 받고 유저냉장고에 넣는 역할 (나중에 inputIngredient랑 합쳐도 괜찮을듯 (합침 기억해두기))
     // console.log(weight, ingredient_name, conversionType, currentUnit, category)
     const storePreviousUserRefrigerator = await fetchUserRefrigerator();
-    console.log(storePreviousUserRefrigerator);
+    // console.log(storePreviousUserRefrigerator);
     const switchedUnit = await switchUnitConversion (weight, ingredient_name, conversionType, category);
     const switchedUnitData = switchedUnit.data;
     // console.log(switchedUnitData);
@@ -294,67 +294,50 @@ const updateUsersRefrigeratorAddedFromIngredient = async (weight, ingredient_nam
 const showOnRefrigerator = async () => {
   try {
     const userRefrigerator = await fetchUserRefrigerator();
-    
-    console.log("User refrigerator data:", userRefrigerator);
 
-    // Check if userRefrigerator exists and has ingredients
     if (!userRefrigerator || Object.keys(userRefrigerator).length === 0) {
       console.log("User refrigerator does not exist or has no ingredients.");
       return false;
     }
 
-    // Assuming you want to process each ingredient in the refrigerator
-    const updatedIngredients = [];
+    const updatedIngredientsMap = new Map();
 
-    // Iterate over each ingredient in the refrigerator
     for (const [ingredientId, ingredientData] of Object.entries(userRefrigerator)) {
       const unit = ingredientData.user_ingredient_current_unit;
       const weight = ingredientData.user_ingredient_gram;
       const name = ingredientData.user_ingredient_name;
       const category = ingredientData.user_ingredient_category;
 
-      console.log("Unit:", unit);
-      console.log("Weight:", weight);
-      console.log("Name:", name);
-      console.log("Category:", category);
-
       let conversionType;
-
-      // Determine conversion type based on unit
       switch (unit) {
         case 'g':
-          conversionType = 'gram_to_gram'; // Assuming conversion to spoon for 'g'
+          conversionType = 'gram_to_gram';
           break;
         case '개':
-          conversionType = 'gram_to_unit'; // Assuming conversion to unit for '개'
+          conversionType = 'gram_to_unit';
           break;
         case '스푼':
           conversionType = 'gram_to_spoon';
           break;
         case 'ml':
-          conversionType = 'gram_to_ml'; // Assuming conversion to spoon for 'ml'
+          conversionType = 'gram_to_ml';
           break;
         default:
-          conversionType = '  ';
+          conversionType = '';
           break;
       }
-
-      console.log("Conversion type:", conversionType);
 
       let convertedWeight;
       if (conversionType) {
         convertedWeight = await switchUnitConversion(weight, name, conversionType, category);
         console.log("Converted weight:", convertedWeight);
       } else {
-        // If no conversion needed, set convertedWeight to original weight and unit
         convertedWeight = [weight.toString(), unit];
       }
 
-      // Add the updated ingredient to the list
-      updatedIngredients.push({
+      updatedIngredientsMap.set(ingredientId, {
         unit: unit,
         weight: convertedWeight[0],
-        unitAfterConversion: convertedWeight[1],
         name: name,
         category: category,
         id: ingredientId,
@@ -362,14 +345,15 @@ const showOnRefrigerator = async () => {
       });
     }
 
-    console.log("Updated user refrigerator ingredients:", updatedIngredients);
+    console.log("Updated user refrigerator ingredients:", Array.from(updatedIngredientsMap.values()));
 
-    return updatedIngredients;
+    return Array.from(updatedIngredientsMap.values()); // Convert Map to Array
   } catch (error) {
-    console.error("Error in fetching refrigerator data:", error);
+    console.error("Error in fetching or processing refrigerator data:", error);
     return false;
   }
 };
+
 // 가져온걸로 프런트에서 보여주면 1일차 끗
 
 const updateUsersRecipe = async (recipe_difficulty, recipe_id, recipe_image, recipe_name, recipe_ingredients, recipe_steps, recipe_time) => {
@@ -398,7 +382,7 @@ const fetchRecipeAll = async () => {
     const recipeDB = firestore().collection('recipes').getDocs;
     const recipreInfo = await recipeDB.get();
     const recipreInfoData = recipreInfo.data();
-    console.log(recipreInfoData)
+    // console.log(recipreInfoData)
     return recipreInfoData;
   } catch (error){
     console.error("ERROR IN Calling Recipe DB:", error);
