@@ -11,9 +11,10 @@ const App = () =>{
     <View style={styles.basic}>
       {/* <TapBar></TapBar> */}
       {/* <Ref></Ref> */}
-      <Ingredients></Ingredients>
+      {/* <Ingredients></Ingredients> */}
       {/* <NavBar></NavBar> */}
       {/* <BottomSheet></BottomSheet> */}
+      {/* <AddModifyView></AddModifyView> */}
     </View>
   )
 }
